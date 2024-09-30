@@ -24,8 +24,8 @@ public class DriverFactory {
 	public static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<WebDriver>();
 
 	public WebDriver initDriver(Properties prop) {
-		String browserName = prop.getProperty("browser").trim();
-
+		//String browserName = prop.getProperty("browser").trim();
+		String browserName =System.getProperty("browser");//cmd line argument
 		highlight = prop.getProperty("highlight");
 		System.out.println("Browser name is " + browserName);
 		optionsManager = new OptionsManager(prop);
@@ -57,22 +57,67 @@ public class DriverFactory {
 	public synchronized static WebDriver getDriver() {
 		return tlDriver.get();
 	}
+	
+	/**
+	 * this is used to init the properties from the .properties file
+	 * 
+	 * @return this returns properties (prop)
+	 */
 
 	public Properties initProp() {
 		prop = new Properties();
+		FileInputStream ip = null;
+		// mvn clean install -Denv="qa"
+		// mvn clean install
+		
+		String envName = System.getProperty("env");
+		System.out.println("running test suite on env--->" + envName);
+		//Log.info("running test suite on env--->" + envName);
+		if (envName == null) {
+			System.out.println("env name is not given, hence running it on QA environment....");
+			try {
+				ip = new FileInputStream("./src/test/resources/config/qa.config.properties");
+			} catch (FileNotFoundException e) {
+				//Log.error("file not found", e);
+				e.printStackTrace();
+			}
+		}else {
+			try {
+				switch (envName.trim().toLowerCase()) {
+				case "qa":
+					ip = new FileInputStream("./src/test/resources/config/qa.config.properties");
+					break;
+				case "stage":
+					ip = new FileInputStream("./src/test/resources/config/stage.config.properties");
+					break;
+				case "dev":
+					ip = new FileInputStream("./src/test/resources/config/dev.config.properties");
+					break;
+				case "uat":
+					ip = new FileInputStream("./src/test/resources/config/uat.config.properties");
+					break;
+				case "prod":
+					ip = new FileInputStream("./src/test/resources/config/qa.config.properties");
+					break;
+
+				default:
+					System.out.println("please pass the right env name.." + envName);
+					//throw new FrameworkException("===WRONGENVPASSED===");
+				}
+			} catch (FileNotFoundException e) {
+				//Log.error("file not found", e);
+				e.printStackTrace();
+			}
+		}
 		try {
-			FileInputStream ip = new FileInputStream("./src/test/resources/config/config.properties");
 			prop.load(ip);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
+		}  catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return prop;
+	
 	}
-
 	/**
 	 * take screenshot
 	 *POM 9 start 1 mins
