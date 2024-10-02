@@ -43,6 +43,7 @@ public class ExtentReportListener implements ITestListener {
 		
 		extentReports = new ExtentReports();
 		ExtentSparkReporter reporter = new ExtentSparkReporter(OUTPUT_FOLDER + FILE_NAME);
+		reporter.config().setResourceCDN(FILE_NAME);//added to verify extent broken report
 		reporter.config().setReportName("Open Cart Automation Test Results");
 		extentReports.attachReporter(reporter);
 		extentReports.setSystemInfo("System", "MAC");
