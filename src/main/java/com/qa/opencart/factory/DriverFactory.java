@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 import org.openqa.selenium.OutputType;
@@ -12,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.io.FileHandler;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
 public class DriverFactory {
@@ -52,6 +55,36 @@ public class DriverFactory {
 
 		return getDriver();
 	}
+	
+	private void initRemoteDriver(String browserName) {
+		System.out.println("Rnning it on GRID...with browser: " + browserName);
+
+		try {
+			switch (browserName) {
+			case "chrome":
+				tlDriver.set(
+						new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsManager.getChromeOptions()));
+				break;
+			case "firefox":
+				tlDriver.set(
+						new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsManager.getFirefoxOptions()));
+				break;
+			case "edge":
+				tlDriver.set(new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsManager.getEdgeOptions()));
+				break;
+
+			default:
+				System.out.println("plz pass the right browser on grid..");
+				//throw new BrowserException(AppError.BROWSER_NOT_FOUND);
+			}
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	
 
 	// get the local thread copy of the driver
 	public synchronized static WebDriver getDriver() {
