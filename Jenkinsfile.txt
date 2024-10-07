@@ -5,43 +5,46 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-               echo{"Build Project"}
+               echo("Build Project")
             }    
         }
 
         stage("Deploy to Dev") {    
             steps {
-                echo {"deploy to Dev"}
+                echo("deploy to Dev")
             }
         }
 
         stage("Deploy to QA") {
-            
             steps {
-                echo {"deploy to qa"}
+                echo("deploy to qa")
+                
             }
         }
 
-        stage('Run Regression Automation Tests') {
+        stage("Run Regression Automation Tests") {
             
             steps {
-                echo {"run automated test"}
+                echo("run automated test")
+                
                 }
             }
         
         
         
-        stage('Run Sanity Tests') {           
+        stage("Run Sanity Tests") {           
             steps {
-                echo {"run automated test"}
+                echo("run Sanity test")
+                
                 }
             }
         
         
-        stage('Deploy to Prod') {           
+        stage("Deploy to Prod") {           
             steps {
-                echo {"Deploy to Prod"}
+                echo("Deploy to Prod")
+                
                 }
             }
-        
+    }   
 }
