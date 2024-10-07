@@ -61,7 +61,7 @@ public class DriverFactory {
 
 		try {
 			switch (browserName) {
-			case "chrome":
+			case "chrome": 
 				tlDriver.set(
 						new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsManager.getChromeOptions()));
 				break;
