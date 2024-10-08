@@ -1,20 +1,19 @@
-pipeline {
+pipeline 
+{
     agent any
 
     tools {
         maven 'maven'
     }
 
-    environment {
-        SANITY_TESTS_RAN = false
-    }
+
 
     stages {
         stage('Build') {
             steps {
                 git 'https://github.com/jglick/simple-maven-project-with-tests.git'
                 bat "mvn -Dmaven.test.failure.ignore=true clean package"
-            }
+            }       
             post {
                 success {
                     junit '**/target/surefire-reports/TEST-*.xml'
@@ -28,12 +27,12 @@ pipeline {
             }
         }
 
-        stage("Deploy to Dev") {
+        stage("Deploy to Development") {
             when {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
             }
             steps {
-                echo "deploy to Dev"
+                echo "deploy to Development"
             }
             post {
                 failure {
