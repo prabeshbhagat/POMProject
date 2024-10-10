@@ -1,162 +1,50 @@
-pipeline 
-{
+pipeline {
     agent any
 
-    tools {
-        maven 'my maven'
-    }
-
-
-
+        
     stages {
-        stage('Build') {
+        stage("Build") {
             steps {
-                git 'https://github.com/jglick/simple-maven-project-with-tests.git'
-                bat "mvn -Dmaven.test.failure.ignore=true clean package"
-            }       
-            post {
-                success {
-                    junit '**/target/surefire-reports/TEST-*.xml'
-                    archiveArtifacts 'target/*.jar'
-                }
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
-            }
+               echo("Build Project")
+            }    
         }
 
-        stage("Deploy to Development") {
-            when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
-            }
+        stage("Deploy to Dev") {    
             steps {
-                echo "deploy to Development"
-            }
-            post {
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
+                echo("deploy to Dev")
             }
         }
 
         stage("Deploy to QA") {
-            when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
-            }
             steps {
-                echo "deploy to qa"
-            }
-            post {
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
+                echo("deploy to qa")
+                
             }
         }
 
-        stage('Run Regression Automation Tests') {
-            when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
-            }
+        stage("Run Regression Automation Tests") {
+            
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    git 'https://github.com/prabeshbhagat/POMProject.git'
-                    bat "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/testng_regression.xml"
+                echo("run automated test")
+                
                 }
             }
-            post {
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
-            }
-        }
-
-        stage('Publish Allure Reports') {
+        
+        
+        
+        stage("Run Sanity Tests") {           
             steps {
-                script {
-                    allure([
-                        includeProperties: false,
-                        jdk: '',
-                        properties: [],
-                        reportBuildPolicy: 'ALWAYS',
-                        results: [[path: '/allure-results']]
-                    ])
+                echo("run Sanity test")
+                
                 }
             }
-        }
-
-        stage('Publish Extent Report') {
+        
+        
+        stage("Deploy to Prod") {           
             steps {
-                publishHTML([allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: 'reports',
-                    reportFiles: 'TestExecutionReport.html',
-                    reportName: 'HTML Regression Extent Report',
-                    reportTitles: ''])
-            }
-        }
-
-        stage("Deploy to Stage") {
-            when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
-            }
-            steps {
-                echo "deploy to Stage"
-            }
-            post {
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
+                echo("Deploy to Prod")
+                
                 }
             }
-        }
-
-        stage('Run Sanity Automation Tests') {
-            when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
-            }
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    git 'https://github.com/prabeshbhagat/POMProject.git'
-                    bat "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/testng_sanity.xml"
-                }
-                script {
-                    env.SANITY_TESTS_RAN = true
-                }
-            }
-            post {
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
-            }
-        }
-
-        stage('Publish sanity Extent Report') {
-            when {
-                expression { env.SANITY_TESTS_RAN == 'true' }
-            }
-            steps {
-                publishHTML([allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: 'reports',
-                    reportFiles: 'TestExecutionReport.html',
-                    reportName: 'HTML Sanity Extent Report',
-                    reportTitles: ''])
-            }
-        }
-    }
-
-    
+    }   
 }
