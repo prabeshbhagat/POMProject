@@ -106,11 +106,7 @@
 		</dependency>
 
 
-		<dependency>
-			<groupId>Sept2022POMSeries</groupId>
-			<artifactId>Sept2022POMSeries</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+
 	</dependencies>
 
 	<build>
