@@ -12,6 +12,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.io.FileHandler;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -34,13 +35,39 @@ public class DriverFactory {
 		optionsManager = new OptionsManager(prop);
 
 		if (browserName.equalsIgnoreCase("chrome")) {
+			
+			if(Boolean.parseBoolean(prop.getProperty("remote"))) {
+				//remote execution on docker/grid/cloud
+				init_remoteDriver("chrome");
+			}else {
+				//local execution
+				tlDriver.set(new ChromeDriver(optionsManager.getChromeOptions()));
+			}
+			
+			
 			// driver = new ChromeDriver();
 			// driver = new ChromeDriver(optionsManager.getChromeOptions());
-			tlDriver.set(new ChromeDriver(optionsManager.getChromeOptions()));
+			//
 		} else if (browserName.equalsIgnoreCase("firefox")) {
-			// driver = new FirefoxDriver(optionsManager.getFirefoxOptions());
-			tlDriver.set(new FirefoxDriver(optionsManager.getFirefoxOptions()));
-		} else if (browserName.equalsIgnoreCase("safari")) {
+
+			if(Boolean.parseBoolean(prop.getProperty("remote"))) {
+				//remote execution on docker/grid/cloud
+				init_remoteDriver("firefox");
+			}else {
+				//local execution
+				tlDriver.set(new FirefoxDriver(optionsManager.getFirefoxOptions()));
+			}
+
+		}  else if (browserName.equalsIgnoreCase("edge")) {
+			if(Boolean.parseBoolean(prop.getProperty("remote"))) {
+				//remote execution on docker/grid/cloud
+				init_remoteDriver("edge");
+			}else {
+				//local execution
+				tlDriver.set(new EdgeDriver(optionsManager.getEdgeOptions()));
+			}
+		}
+		else if (browserName.equalsIgnoreCase("safari")) {
 			// driver = new SafariDriver();
 			tlDriver.set(new SafariDriver());
 		}
@@ -56,30 +83,34 @@ public class DriverFactory {
 		return getDriver();
 	}
 	
-	private void initRemoteDriver(String browserName) {
-		System.out.println("Rnning it on GRID...with browser: " + browserName);
+	private void init_remoteDriver(String browserName) {
 
-		try {
-			switch (browserName) {
-			case "chrome": 
+		System.out.println("Running test cases on remote grid server: " + browserName);
+
+		if (browserName.equalsIgnoreCase("chrome")) {
+			try {
 				tlDriver.set(
 						new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsManager.getChromeOptions()));
-				break;
-			case "firefox":
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (browserName.equalsIgnoreCase("firefox")) {
+			try {
 				tlDriver.set(
 						new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsManager.getFirefoxOptions()));
-				break;
-			case "edge":
-				tlDriver.set(new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsManager.getEdgeOptions()));
-				break;
-
-			default:
-				System.out.println("plz pass the right browser on grid..");
-				//throw new BrowserException(AppError.BROWSER_NOT_FOUND);
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
 			}
+		}
 
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+		if (browserName.equalsIgnoreCase("edge")) {
+			try {
+				tlDriver.set(new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsManager.getEdgeOptions()));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}

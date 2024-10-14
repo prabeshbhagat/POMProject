@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 
-<suite name="Opencart App Test Regression Suite" thread-count="4" parallel="tests" verbose="4">
+<suite name="Opencart App Test Regression Suite" thread-count="4"
+	parallel="tests" verbose="4">
 
 
 	<listeners>
@@ -9,12 +10,13 @@
 		<listener class-name="com.qa.opencart.listeners.TestAllureListener" />
 	</listeners>
 
-
 	<test name="Login Page Test">
-
+		<parameter name="browser" value="chrome" />
+		<parameter name="browserversion" value="129.0" />
+		<parameter name="testname" value="Login Page Test" />
 		<classes>
-			<class name="com.qa.opencart.tests.LoginPageTest" >
-			<!--methods>
+			<class name="com.qa.opencart.tests.LoginPageTest">
+				<!--methods>
 				<include name="loginPageTitleTest" />
 				<include name="loginPageURLTest" />
 				<exclude name="forgotPwdLinkExistTest"/>
@@ -26,27 +28,32 @@
 	</test>
 
 	<test name="Accounts Page Test">
-
+		<parameter name="browser" value="firefox" />
+		<parameter name="browserversion" value="124.0" />
+		<parameter name="testname" value="Accounts Page Test" />
 		<classes>
 			<class name="com.qa.opencart.tests.AccountsPageTest" />
 		</classes>
 
 	</test>
 
-	<!--test name="Product Info Page Test">
+	<test name="ProductInfo Page Test">
+		<parameter name="browser" value="edge" />
+		<parameter name="browserversion" value="129.0" />
+		<parameter name="testname" value="ProductInfo Page Test" />
 
 		<classes>
 			<class name="com.qa.opencart.tests.ProductInfoPageTest" />
 		</classes>
 
 	</test>
-	< test name="Register Page Test">
+	<!-- test name="Register Page Test">
 
 		<classes>
 			<class name="com.qa.opencart.tests.RegPageTest" />
 		</classes>
 
-	</test>--> 
+	</test>-->
 
 
 </suite>
