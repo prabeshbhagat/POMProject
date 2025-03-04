@@ -41,7 +41,7 @@ public class LoginPage {
 
 	@Step("Verify forgot pwd link")
 	public Boolean forgottenPwdLinkExist() {
-		//return driver.findElement(forgottenPwd).isDisplayed();
+		// return driver.findElement(forgottenPwd).isDisplayed();
 		return eleUtil.doIsDisplayed(forgottenPwd);
 	}
 
@@ -56,7 +56,7 @@ public class LoginPage {
 		eleUtil.doClick(lgnBtn);
 		return new AccountsPage(driver);
 	}
-	
+
 	@Step("naviagting to register page")
 	public RegPage navigateToRegisterPage() {
 		eleUtil.doClick(registerLink);
